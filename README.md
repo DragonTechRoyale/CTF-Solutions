@@ -1,2 +1,2 @@
 # CTF-Writeups
-Writeups of CTF challenges I've successfully pwned
+Writeups and exploits of CTF challenges I've successfully pwned
