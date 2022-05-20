@@ -1,0 +1,1328 @@
+ssh random@pwnable.kr -p2222
+random@pwnable.kr's password:
+ls
+flag  random  random.c
+cat random.c
+#include <stdio.h>
+
+int main(){
+	unsigned int random;
+	random = rand();	// random value!
+
+	unsigned int key=0;
+	scanf("%d", &key);
+
+	if( (key ^ random) == 0xdeadbeef ){
+		printf("Good!\n");
+		system("/bin/cat flag");
+		return 0;
+	}
+
+	printf("Wrong, maybe you should try 2^32 cases.\n");
+	return 0;
+}
+
+touch test.txt
+touch: cannot touch 'test.txt': Permission denied
+exit
+exit
+Connection to pwnable.kr closed.
+ssh random@pwnable.kr -p2222
+random@pwnable.kr's password:
+ssh random@pwnable.kr -p2222
+random@pwnable.kr's password:
+ls
+flag  random  random.c
+./random
+4294967296
+Wrong, maybe you should try 2^32 cases.
+./random
+4294967296
+
+Wrong, maybe you should try 2^32 cases.
+
+python3
+Python 3.5.2 (default, Jan 26 2021, 13:30:48)
+[GCC 5.4.0 20160609] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 4294967296 ^ 0xdeadbeef
+8030895855
+>>> quit()
+Error in atexit._run_exitfuncs:
+PermissionError: [Errno 13] Permission denied
+./random
+
+Wrong, maybe you should try 2^32 cases.
+./random
+8030895855
+Wrong, maybe you should try 2^32 cases.
+python3
+Python 3.5.2 (default, Jan 26 2021, 13:30:48)
+[GCC 5.4.0 20160609] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 0xdeadbeef ^ 4294967296
+8030895855
+>>>
+Error in atexit._run_exitfuncs:
+PermissionError: [Errno 13] Permission denied
+^F
+./random
+0
+Wrong, maybe you should try 2^32 cases.
+./random
+3735928559
+Wrong, maybe you should try 2^32 cases.
+ls
+flag  random  random.c
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   %rbp
+   0x00000000004005f5 <+1>:	mov    %rsp,%rbp
+   0x00000000004005f8 <+4>:	sub    $0x10,%rsp
+   0x00000000004005fc <+8>:	mov    $0x0,%eax
+   0x0000000000400601 <+13>:	callq  0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    %eax,-0x4(%rbp)
+   0x0000000000400609 <+21>:	movl   $0x0,-0x8(%rbp)
+   0x0000000000400610 <+28>:	mov    $0x400760,%eax
+   0x0000000000400615 <+33>:	lea    -0x8(%rbp),%rdx
+   0x0000000000400619 <+37>:	mov    %rdx,%rsi
+   0x000000000040061c <+40>:	mov    %rax,%rdi
+   0x000000000040061f <+43>:	mov    $0x0,%eax
+   0x0000000000400624 <+48>:	callq  0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    -0x8(%rbp),%eax
+   0x000000000040062c <+56>:	xor    -0x4(%rbp),%eax
+   0x000000000040062f <+59>:	cmp    $0xdeadbeef,%eax
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    $0x400763,%edi
+   0x000000000040063b <+71>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    $0x400769,%edi
+   0x0000000000400645 <+81>:	mov    $0x0,%eax
+   0x000000000040064a <+86>:	callq  0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    $0x0,%eax
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    $0x400778,%edi
+   0x000000000040065b <+103>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    $0x0,%eax
+   0x0000000000400665 <+113>:	leaveq
+   0x0000000000400666 <+114>:	retq
+End of assembler dump.
+(gdb) b *0x0000000000400606
+Breakpoint 1 at 0x400606
+(gdb) r
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) i r
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x7f98095710a4	140290968457380
+rdx            0x7f98095710a8	140290968457384
+rsi            0x7ffeecd7d8bc	140732871989436
+rdi            0x7f9809571620	140290968458784
+rbp            0x7ffeecd7d8f0	0x7ffeecd7d8f0
+rsp            0x7ffeecd7d8e0	0x7ffeecd7d8e0
+r8             0x7f98095710a4	140290968457380
+r9             0x7f9809571120	140290968457504
+r10            0x47f	1151
+r11            0x7f98091e7f70	140290964750192
+r12            0x400510	4195600
+r13            0x7ffeecd7d9d0	140732871989712
+r14            0x0	0
+r15            0x0	0
+rip            0x400606	0x400606 <main+18>
+eflags         0x206	[ PF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) ir
+Undefined command: "ir".  Try "help".
+(gdb) i r
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x7fd4ff66d0a4	140552794722468
+rdx            0x7fd4ff66d0a8	140552794722472
+rsi            0x7ffed095524c	140732397867596
+rdi            0x7fd4ff66d620	140552794723872
+rbp            0x7ffed0955280	0x7ffed0955280
+rsp            0x7ffed0955270	0x7ffed0955270
+r8             0x7fd4ff66d0a4	140552794722468
+r9             0x7fd4ff66d120	140552794722592
+r10            0x47f	1151
+r11            0x7fd4ff2e3f70	140552791015280
+r12            0x400510	4195600
+r13            0x7ffed0955360	140732397867872
+r14            0x0	0
+r15            0x0	0
+rip            0x400606	0x400606 <main+18>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) x/s $rsp
+0x7ffed0955270:	"`S\225\320\376\177"
+(gdb) x/12 $rsp
+0x7ffed0955270:	"`S\225\320\376\177"
+0x7ffed0955277:	""
+0x7ffed0955278:	""
+0x7ffed0955279:	""
+0x7ffed095527a:	""
+0x7ffed095527b:	""
+0x7ffed095527c:	""
+0x7ffed095527d:	""
+0x7ffed095527e:	""
+0x7ffed095527f:	""
+0x7ffed0955280:	"p\006@"
+0x7ffed0955284:	""
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/12 $rsp
+0x7ffda393e4d0:	"\300哣\375\177"
+0x7ffda393e4d7:	""
+0x7ffda393e4d8:	""
+0x7ffda393e4d9:	""
+0x7ffda393e4da:	""
+0x7ffda393e4db:	""
+0x7ffda393e4dc:	""
+0x7ffda393e4dd:	""
+0x7ffda393e4de:	""
+0x7ffda393e4df:	""
+0x7ffda393e4e0:	"p\006@"
+0x7ffda393e4e4:	""
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/12 $rsp
+0x7ffcceb13e20:	"\020?\261\316\374\177"
+0x7ffcceb13e27:	""
+0x7ffcceb13e28:	""
+0x7ffcceb13e29:	""
+0x7ffcceb13e2a:	""
+0x7ffcceb13e2b:	""
+0x7ffcceb13e2c:	""
+0x7ffcceb13e2d:	""
+0x7ffcceb13e2e:	""
+0x7ffcceb13e2f:	""
+0x7ffcceb13e30:	"p\006@"
+0x7ffcceb13e34:	""
+(gdb) x/12x $rsp
+0x7ffcceb13e20:	0x10	0x3f	0xb1	0xce	0xfc	0x7f	0x00	0x00
+0x7ffcceb13e28:	0x00	0x00	0x00	0x00
+(gdb) x/12d $rsp
+0x7ffcceb13e20:	16	63	-79	-50	-4	127	0	0
+0x7ffcceb13e28:	0	0	0	0
+(gdb) xd $rsp
+Undefined command: "xd".  Try "help".
+(gdb) x/d $rsp
+0x7ffcceb13e20:	16
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7fff8cdbea70:	96
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffcbdb2c000:	-16
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffcff44ca00:	-16
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffe79c5a0c0:	-80
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 420098] will be killed.
+
+Quit anyway? (y or n) y
+./random
+16
+Wrong, maybe you should try 2^32 cases.
+./random
+16
+Wrong, maybe you should try 2^32 cases.
+./random
+16
+Wrong, maybe you should try 2^32 cases.
+./random
+16^[[A
+Wrong, maybe you should try 2^32 cases.
+
+./random
+16
+Wrong, maybe you should try 2^32 cases.
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   %rbp
+   0x00000000004005f5 <+1>:	mov    %rsp,%rbp
+   0x00000000004005f8 <+4>:	sub    $0x10,%rsp
+   0x00000000004005fc <+8>:	mov    $0x0,%eax
+   0x0000000000400601 <+13>:	callq  0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    %eax,-0x4(%rbp)
+   0x0000000000400609 <+21>:	movl   $0x0,-0x8(%rbp)
+   0x0000000000400610 <+28>:	mov    $0x400760,%eax
+   0x0000000000400615 <+33>:	lea    -0x8(%rbp),%rdx
+   0x0000000000400619 <+37>:	mov    %rdx,%rsi
+   0x000000000040061c <+40>:	mov    %rax,%rdi
+   0x000000000040061f <+43>:	mov    $0x0,%eax
+   0x0000000000400624 <+48>:	callq  0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    -0x8(%rbp),%eax
+   0x000000000040062c <+56>:	xor    -0x4(%rbp),%eax
+   0x000000000040062f <+59>:	cmp    $0xdeadbeef,%eax
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    $0x400763,%edi
+   0x000000000040063b <+71>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    $0x400769,%edi
+   0x0000000000400645 <+81>:	mov    $0x0,%eax
+   0x000000000040064a <+86>:	callq  0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    $0x0,%eax
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    $0x400778,%edi
+   0x000000000040065b <+103>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    $0x0,%eax
+   0x0000000000400665 <+113>:	leaveq
+   0x0000000000400666 <+114>:	retq
+End of assembler dump.
+(gdb) b *0x0000000000400606
+Breakpoint 1 at 0x400606
+(gdb) r
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $esp
+0x5184f3d0:	Cannot access memory at address 0x5184f3d0
+(gdb) i r
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x7fe30be790a4	140613134028964
+rdx            0x7fe30be790a8	140613134028968
+rsi            0x7fff5184f3ac	140734561055660
+rdi            0x7fe30be79620	140613134030368
+rbp            0x7fff5184f3e0	0x7fff5184f3e0
+rsp            0x7fff5184f3d0	0x7fff5184f3d0
+r8             0x7fe30be790a4	140613134028964
+r9             0x7fe30be79120	140613134029088
+r10            0x47f	1151
+r11            0x7fe30baeff70	140613130321776
+r12            0x400510	4195600
+r13            0x7fff5184f4c0	140734561055936
+r14            0x0	0
+r15            0x0	0
+rip            0x400606	0x400606 <main+18>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) x/d $rsp
+0x7fff5184f3d0:	1367667904
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7fffec1afe60:	-333775024
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffcc6aeaf80:	-961630096
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7fff8cacabd0:	-1934840640
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffeda1f7f10:	-635469824
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffdce521f40:	-833478608
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffd6db11b90:	1840323712
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffdd6b07d30:	-693076448
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffe0db38900:	229870064
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffe91aba270:	-1851022496
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffcf7ef39f0:	-135316768
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffd4ae46ca0:	1256484240
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffdab92d3b0:	-1416440672
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+
+Breakpoint 1, 0x0000000000400606 in main ()
+(gdb) x/d $rsp
+0x7ffe541a0970:	1410992736
+(gdb) info break
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000000400606 <main+18>
+	breakpoint already hit 1 time
+(gdb) del 1
+(gdb) b *0x000000000040062f
+Breakpoint 2 at 0x40062f
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+^C
+Program received signal SIGINT, Interrupt.
+0x00007f1bb2555360 in __read_nocancel () at ../sysdeps/unix/syscall-template.S:84
+84	../sysdeps/unix/syscall-template.S: No such file or directory.
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 46993] will be killed.
+
+Quit anyway? (y or n) y
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) b 0x000000000040062f
+Function "0x000000000040062f" not defined.
+Make breakpoint pending on future shared library load? (y or [n]) n
+(gdb) b *0x000000000040062f
+Breakpoint 1 at 0x40062f
+(gdb) r
+Starting program: /home/random/random
+^C
+Program received signal SIGINT, Interrupt.
+0x00007fb20cb55360 in __read_nocancel () at ../sysdeps/unix/syscall-template.S:84
+84	../sysdeps/unix/syscall-template.S: No such file or directory.
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 87065] will be killed.
+
+Quit anyway? (y or n) y
+./random
+0x000000000040062f
+Wrong, maybe you should try 2^32 cases.
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) r
+Starting program: /home/random/random
+6
+Wrong, maybe you should try 2^32 cases.
+[Inferior 1 (process 123549) exited normally]
+(gdb) set disassembly-flavor intel
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   rbp
+   0x00000000004005f5 <+1>:	mov    rbp,rsp
+   0x00000000004005f8 <+4>:	sub    rsp,0x10
+   0x00000000004005fc <+8>:	mov    eax,0x0
+   0x0000000000400601 <+13>:	call   0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    DWORD PTR [rbp-0x4],eax
+   0x0000000000400609 <+21>:	mov    DWORD PTR [rbp-0x8],0x0
+   0x0000000000400610 <+28>:	mov    eax,0x400760
+   0x0000000000400615 <+33>:	lea    rdx,[rbp-0x8]
+   0x0000000000400619 <+37>:	mov    rsi,rdx
+   0x000000000040061c <+40>:	mov    rdi,rax
+   0x000000000040061f <+43>:	mov    eax,0x0
+   0x0000000000400624 <+48>:	call   0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    eax,DWORD PTR [rbp-0x8]
+   0x000000000040062c <+56>:	xor    eax,DWORD PTR [rbp-0x4]
+   0x000000000040062f <+59>:	cmp    eax,0xdeadbeef
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    edi,0x400763
+   0x000000000040063b <+71>:	call   0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    edi,0x400769
+   0x0000000000400645 <+81>:	mov    eax,0x0
+   0x000000000040064a <+86>:	call   0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    eax,0x0
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    edi,0x400778
+   0x000000000040065b <+103>:	call   0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    eax,0x0
+   0x0000000000400665 <+113>:	leave
+   0x0000000000400666 <+114>:	ret
+End of assembler dump.
+(gdb) b *0x000000000040062f
+Breakpoint 1 at 0x40062f
+(gdb) r
+Starting program: /home/random/random
+12
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x6b8b456b	1804289387
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7f81ae145790	140194948077456
+rsi            0x1	1
+rdi            0x7ffc88111d20	140722591309088
+rbp            0x7ffc88112250	0x7ffc88112250
+rsp            0x7ffc88112240	0x7ffc88112240
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7f81adef66e0	140194945656544
+r12            0x400510	4195600
+r13            0x7ffc88112330	140722591310640
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) x $eax
+0x6b8b456b:	Cannot access memory at address 0x6b8b456b
+(gdb) disas $rip
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   rbp
+   0x00000000004005f5 <+1>:	mov    rbp,rsp
+   0x00000000004005f8 <+4>:	sub    rsp,0x10
+   0x00000000004005fc <+8>:	mov    eax,0x0
+   0x0000000000400601 <+13>:	call   0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    DWORD PTR [rbp-0x4],eax
+   0x0000000000400609 <+21>:	mov    DWORD PTR [rbp-0x8],0x0
+   0x0000000000400610 <+28>:	mov    eax,0x400760
+   0x0000000000400615 <+33>:	lea    rdx,[rbp-0x8]
+   0x0000000000400619 <+37>:	mov    rsi,rdx
+   0x000000000040061c <+40>:	mov    rdi,rax
+   0x000000000040061f <+43>:	mov    eax,0x0
+   0x0000000000400624 <+48>:	call   0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    eax,DWORD PTR [rbp-0x8]
+   0x000000000040062c <+56>:	xor    eax,DWORD PTR [rbp-0x4]
+=> 0x000000000040062f <+59>:	cmp    eax,0xdeadbeef
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    edi,0x400763
+   0x000000000040063b <+71>:	call   0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    edi,0x400769
+   0x0000000000400645 <+81>:	mov    eax,0x0
+   0x000000000040064a <+86>:	call   0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    eax,0x0
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    edi,0x400778
+   0x000000000040065b <+103>:	call   0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    eax,0x0
+   0x0000000000400665 <+113>:	leave
+   0x0000000000400666 <+114>:	ret
+End of assembler dump.
+(gdb) ni
+0x0000000000400634 in main ()
+(gdb) ni
+0x0000000000400656 in main ()
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 172568] will be killed.
+
+Quit anyway? (y or n) y
+python3 1804289387
+python3: can't open file '1804289387': [Errno 2] No such file or directory
+1804289387 ^ 0xdeadbeef
+1804289387: command not found
+python3
+Python 3.5.2 (default, Jan 26 2021, 13:30:48)
+[GCC 5.4.0 20160609] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> print(1804289387 ^ 0xdeadbeec)
+3039230855
+>>> print(1804289387 ^ 0xdeadbeef)
+3039230852
+>>> hex(3039230852)
+'0xb526fb84'
+>>> q
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'q' is not defined
+>>> q
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'q' is not defined
+>>>
+Error in atexit._run_exitfuncs:
+PermissionError: [Errno 13] Permission denied
+printf "\x84\xfb\x26\xb5"
+&
+printf "\x84\xfb\x26\xb5" | ./random
+Wrong, maybe you should try 2^32 cases.
+gdb
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) Quit
+(gdb) q
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   %rbp
+   0x00000000004005f5 <+1>:	mov    %rsp,%rbp
+   0x00000000004005f8 <+4>:	sub    $0x10,%rsp
+   0x00000000004005fc <+8>:	mov    $0x0,%eax
+   0x0000000000400601 <+13>:	callq  0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    %eax,-0x4(%rbp)
+   0x0000000000400609 <+21>:	movl   $0x0,-0x8(%rbp)
+   0x0000000000400610 <+28>:	mov    $0x400760,%eax
+   0x0000000000400615 <+33>:	lea    -0x8(%rbp),%rdx
+   0x0000000000400619 <+37>:	mov    %rdx,%rsi
+   0x000000000040061c <+40>:	mov    %rax,%rdi
+   0x000000000040061f <+43>:	mov    $0x0,%eax
+   0x0000000000400624 <+48>:	callq  0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    -0x8(%rbp),%eax
+   0x000000000040062c <+56>:	xor    -0x4(%rbp),%eax
+   0x000000000040062f <+59>:	cmp    $0xdeadbeef,%eax
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    $0x400763,%edi
+   0x000000000040063b <+71>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    $0x400769,%edi
+   0x0000000000400645 <+81>:	mov    $0x0,%eax
+   0x000000000040064a <+86>:	callq  0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    $0x0,%eax
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    $0x400778,%edi
+   0x000000000040065b <+103>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    $0x0,%eax
+   0x0000000000400665 <+113>:	leaveq
+   0x0000000000400666 <+114>:	retq
+End of assembler dump.
+(gdb) Quit
+(gdb) q
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) run < 0
+Starting program: /home/random/random < 0
+/bin/bash: 0: No such file or directory
+During startup program exited with code 1.
+(gdb) run < flag
+Starting program: /home/random/random < flag
+/bin/bash: flag: Permission denied
+During startup program exited with code 1.
+(gdb) r
+Starting program: /home/random/random < flag
+/bin/bash: flag: Permission denied
+During startup program exited with code 1.
+(gdb) r
+Starting program: /home/random/random < flag
+/bin/bash: flag: Permission denied
+During startup program exited with code 1.
+(gdb) q
+gdb random
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from random...(no debugging symbols found)...done.
+(gdb) r
+Starting program: /home/random/random
+2
+Wrong, maybe you should try 2^32 cases.
+[Inferior 1 (process 413415) exited normally]
+(gdb) disas mian
+No symbol "mian" in current context.
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   %rbp
+   0x00000000004005f5 <+1>:	mov    %rsp,%rbp
+   0x00000000004005f8 <+4>:	sub    $0x10,%rsp
+   0x00000000004005fc <+8>:	mov    $0x0,%eax
+   0x0000000000400601 <+13>:	callq  0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    %eax,-0x4(%rbp)
+   0x0000000000400609 <+21>:	movl   $0x0,-0x8(%rbp)
+   0x0000000000400610 <+28>:	mov    $0x400760,%eax
+   0x0000000000400615 <+33>:	lea    -0x8(%rbp),%rdx
+   0x0000000000400619 <+37>:	mov    %rdx,%rsi
+   0x000000000040061c <+40>:	mov    %rax,%rdi
+   0x000000000040061f <+43>:	mov    $0x0,%eax
+   0x0000000000400624 <+48>:	callq  0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    -0x8(%rbp),%eax
+   0x000000000040062c <+56>:	xor    -0x4(%rbp),%eax
+   0x000000000040062f <+59>:	cmp    $0xdeadbeef,%eax
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    $0x400763,%edi
+   0x000000000040063b <+71>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    $0x400769,%edi
+   0x0000000000400645 <+81>:	mov    $0x0,%eax
+   0x000000000040064a <+86>:	callq  0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    $0x0,%eax
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    $0x400778,%edi
+   0x000000000040065b <+103>:	callq  0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    $0x0,%eax
+   0x0000000000400665 <+113>:	leaveq
+   0x0000000000400666 <+114>:	retq
+End of assembler dump.
+(gdb) set disassembly-flavor intel
+(gdb) disas main
+Dump of assembler code for function main:
+   0x00000000004005f4 <+0>:	push   rbp
+   0x00000000004005f5 <+1>:	mov    rbp,rsp
+   0x00000000004005f8 <+4>:	sub    rsp,0x10
+   0x00000000004005fc <+8>:	mov    eax,0x0
+   0x0000000000400601 <+13>:	call   0x400500 <rand@plt>
+   0x0000000000400606 <+18>:	mov    DWORD PTR [rbp-0x4],eax
+   0x0000000000400609 <+21>:	mov    DWORD PTR [rbp-0x8],0x0
+   0x0000000000400610 <+28>:	mov    eax,0x400760
+   0x0000000000400615 <+33>:	lea    rdx,[rbp-0x8]
+   0x0000000000400619 <+37>:	mov    rsi,rdx
+   0x000000000040061c <+40>:	mov    rdi,rax
+   0x000000000040061f <+43>:	mov    eax,0x0
+   0x0000000000400624 <+48>:	call   0x4004f0 <__isoc99_scanf@plt>
+   0x0000000000400629 <+53>:	mov    eax,DWORD PTR [rbp-0x8]
+   0x000000000040062c <+56>:	xor    eax,DWORD PTR [rbp-0x4]
+   0x000000000040062f <+59>:	cmp    eax,0xdeadbeef
+   0x0000000000400634 <+64>:	jne    0x400656 <main+98>
+   0x0000000000400636 <+66>:	mov    edi,0x400763
+   0x000000000040063b <+71>:	call   0x4004c0 <puts@plt>
+   0x0000000000400640 <+76>:	mov    edi,0x400769
+   0x0000000000400645 <+81>:	mov    eax,0x0
+   0x000000000040064a <+86>:	call   0x4004d0 <system@plt>
+   0x000000000040064f <+91>:	mov    eax,0x0
+   0x0000000000400654 <+96>:	jmp    0x400665 <main+113>
+   0x0000000000400656 <+98>:	mov    edi,0x400778
+   0x000000000040065b <+103>:	call   0x4004c0 <puts@plt>
+   0x0000000000400660 <+108>:	mov    eax,0x0
+   0x0000000000400665 <+113>:	leave
+   0x0000000000400666 <+114>:	ret
+End of assembler dump.
+(gdb) b *0x000000000040062f
+Breakpoint 1 at 0x40062f
+(gdb) r
+Starting program: /home/random/random
+0
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7f025ac51790	139648089528208
+rsi            0x1	1
+rdi            0x7ffef875e6f0	140733066897136
+rbp            0x7ffef875ec20	0x7ffef875ec20
+rsp            0x7ffef875ec10	0x7ffef875ec10
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7f025aa026e0	139648087107296
+r12            0x400510	4195600
+r13            0x7ffef875ed00	140733066898688
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb)
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7f025ac51790	139648089528208
+rsi            0x1	1
+rdi            0x7ffef875e6f0	140733066897136
+rbp            0x7ffef875ec20	0x7ffef875ec20
+rsp            0x7ffef875ec10	0x7ffef875ec10
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7f025aa026e0	139648087107296
+r12            0x400510	4195600
+r13            0x7ffef875ed00	140733066898688
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+i r
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x6b8b4567	1804289383
+rbx            0x0	0
+rcx            0x69	105
+rdx            0x7f8dc51f4790	140246874277776
+rsi            0x0	0
+rdi            0x7ffd93cb3a10	140727083022864
+rbp            0x7ffd93cb3f40	0x7ffd93cb3f40
+rsp            0x7ffd93cb3f30	0x7ffd93cb3f30
+r8             0x0	0
+r9             0x7f8dc540c700	140246876473088
+r10            0x7f8dc51f2b78	140246874270584
+r11            0x246	582
+r12            0x400510	4195600
+r13            0x7ffd93cb4020	140727083024416
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+1212412323
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x23c8b4c4	600356036
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7ff09f64e790	140671443068816
+rsi            0x1	1
+rdi            0x7ffcee6d1980	140724308613504
+rbp            0x7ffcee6d1eb0	0x7ffcee6d1eb0
+rsp            0x7ffcee6d1ea0	0x7ffcee6d1ea0
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7ff09f3ff6e0	140671440647904
+r12            0x400510	4195600
+r13            0x7ffcee6d1f90	140724308615056
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) i r
+rax            0x23c8b4c4	600356036
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7ff09f64e790	140671443068816
+rsi            0x1	1
+rdi            0x7ffcee6d1980	140724308613504
+rbp            0x7ffcee6d1eb0	0x7ffcee6d1eb0
+rsp            0x7ffcee6d1ea0	0x7ffcee6d1ea0
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7ff09f3ff6e0	140671440647904
+r12            0x400510	4195600
+r13            0x7ffcee6d1f90	140724308615056
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+3735928559
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0xb526fb88	3039230856
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7fc233e54790	140472071047056
+rsi            0x1	1
+rdi            0x7ffdc2c82560	140727871350112
+rbp            0x7ffdc2c82a90	0x7ffdc2c82a90
+rsp            0x7ffdc2c82a80	0x7ffdc2c82a80
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7fc233c056e0	140472068626144
+r12            0x400510	4195600
+r13            0x7ffdc2c82b70	140727871351664
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x286	[ PF SF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+1804289383
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x0	0
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7efccbfa4790	139624219035536
+rsi            0x1	1
+rdi            0x7ffd0cb751a0	140724816794016
+rbp            0x7ffd0cb756d0	0x7ffd0cb756d0
+rsp            0x7ffd0cb756c0	0x7ffd0cb756c0
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7efccbd556e0	139624216614624
+r12            0x400510	4195600
+r13            0x7ffd0cb757b0	140724816795568
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x246	[ PF ZF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) c
+Continuing.
+Wrong, maybe you should try 2^32 cases.
+[Inferior 1 (process 287033) exited normally]
+(gdb) r
+Starting program: /home/random/random
+4251257387
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x96ee4f4c	2532200268
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7fc7f40c0790	140496769648528
+rsi            0x1	1
+rdi            0x7ffc8945b0a0	140722611531936
+rbp            0x7ffc8945b5d0	0x7ffc8945b5d0
+rsp            0x7ffc8945b5c0	0x7ffc8945b5c0
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7fc7f3e716e0	140496767227616
+r12            0x400510	4195600
+r13            0x7ffc8945b6b0	140722611533488
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x282	[ SF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+1804289383
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0x0	0
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7f32333dd790	139853584783248
+rsi            0x1	1
+rdi            0x7ffdcd1520c0	140728044167360
+rbp            0x7ffdcd1525f0	0x7ffdcd1525f0
+rsp            0x7ffdcd1525e0	0x7ffdcd1525e0
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7f323318e6e0	139853582362336
+r12            0x400510	4195600
+r13            0x7ffdcd1526d0	140728044168912
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x246	[ PF ZF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/random/random
+3039230856
+
+Breakpoint 1, 0x000000000040062f in main ()
+(gdb) i r
+rax            0xdeadbeef	3735928559
+rbx            0x0	0
+rcx            0x10	16
+rdx            0x7f96d8342790	140285849118608
+rsi            0x1	1
+rdi            0x7ffffb3ed8f0	140737408588016
+rbp            0x7ffffb3ede20	0x7ffffb3ede20
+rsp            0x7ffffb3ede10	0x7ffffb3ede10
+r8             0x0	0
+r9             0x0	0
+r10            0x0	0
+r11            0x7f96d80f36e0	140285846697696
+r12            0x400510	4195600
+r13            0x7ffffb3edf00	140737408589568
+r14            0x0	0
+r15            0x0	0
+rip            0x40062f	0x40062f <main+59>
+eflags         0x282	[ SF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+k0             0x0	0
+k1             0x0	0
+k2             0x0	0
+k3             0x0	0
+k4             0x0	0
+k5             0x0	0
+k6             0x0	0
+k7             0x0	0
+(gdb) c
+Continuing.
+Good!
+/bin/cat: flag: Permission denied
+[Inferior 1 (process 61406) exited normally]
+(gdb) q
+./random
+3039230856
+Good!
+Mommy, I thought libc random is unpredictable...
+touch grass
+touch: cannot touch 'grass': Permission denied
