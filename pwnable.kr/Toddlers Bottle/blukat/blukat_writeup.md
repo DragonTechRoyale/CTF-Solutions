@@ -24,4 +24,4 @@ Continuing.
 # Why it works (writeup)
 
 0x000000000040086f is the adress of `<main+117>: jne 0x4008a0 <main+166>` which jumps to the else{} at the end of main(), so i made it skip that jne (by setting the Z flag) to jump to calc_flag() which apperently just prints the flag (initially i though it won't work in gdb).
-
+Initially that jne will jumo because I'm just supplying 23 a's as the passoword, which obviosly isn't the password, so it fails the strcmp().
