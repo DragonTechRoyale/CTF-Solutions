@@ -1,4 +1,4 @@
-Ive gdb'd the program and si'd and ni'd some instructions, observing what's going on. I've looked that after the strcpy (that was in assembly) there's a bunch of text in memory, so ive x'd the registers and on one of them ive found a message about upx and a link to here: https://upx.github.io/. I try unpacking the binary with upx and it works. after that i gdb it again now unpacked and breakpoint to 0x401344 which is just right before exit (and after the strcpy). I run and viola, the flag is in rdi. 
+Ive gdb'd the program and si'd and ni'd some instructions, observing what's going on. I've looked that after the strcpy (that was in assembly) there's a bunch of text in memory, so ive x'd the registers and on one of them ive found a message about upx and a link to here: https://upx.github.io/. I try unpacking the binary with upx and it works. after that i gdb it again now unpacked and breakpoint to 0x401344 which is just right before exit (and after the strcpy). I run and viola, the flag is pointed to by rdi. 
 ```sh
 Starting program: /root/flag.2
 I will malloc() and strcpy the flag there. take it.
@@ -52,4 +52,4 @@ $cs: 0x33 $ss: 0x2b $ds: 0x00 $es: 0x00 $fs: 0x00 $gs: 0x00
 Breakpoint 5, 0x0000000000401344 in __libc_start_main ()
 gef➤
 ```
-I dont really understand why the flag is here, excpet that as far as i know the ctrcpy here copied all the strings in the program or everything in the program and the flag was at the bottom, and rdi pointed to the bottom. Anyways this CTF was pretty easy
+I dont really understand why the flag is here, excpet that as far as I know the strcpy here copied all the strings in the program or everything in the program and the flag was at the bottom, and rdi pointed to the bottom. Anyways this CTF was pretty easy
