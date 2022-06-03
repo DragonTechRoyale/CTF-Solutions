@@ -1,3 +1,15 @@
+# To get the flag
+```sh
+upx -d flag
+gdb flag
+b *0x00000000401344
+r
+x/s $rdi
+```
+
+# Why it works
+Honetly - I don't really know why. But this is what I did:
+
 Ive gdb'd the program and si'd and ni'd some instructions, observing what's going on. I've looked that after the strcpy (that was in assembly) there's a bunch of text in memory, so ive x'd the registers and on one of them ive found a message about upx and a link to here: https://upx.github.io/. I try unpacking the binary with upx and it works. after that i gdb it again now unpacked and breakpoint to 0x401344 which is just right before exit (and after the strcpy). I run and viola, the flag is pointed to by rdi. 
 ```sh
 Starting program: /root/flag.2
