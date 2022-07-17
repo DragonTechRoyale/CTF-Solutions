@@ -15,7 +15,7 @@ def run_behemoth5():
 	process("/behemoth/behemoth5")
 
 def main():
-    get = threading.Thread(target=get_flag)
+    	get = threading.Thread(target=get_flag)
 	run = threading.Thread(target=run_behemoth5)
 	get.start()
 	run.start()
