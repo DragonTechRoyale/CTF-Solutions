@@ -7,15 +7,15 @@
 
 int main()
 {
-	unsigned int info[3000] = { 61 };
+	unsigned int info[3000] = { 0x61 };
 	char * temp = (char *)malloc(3000);
-    syscall(223,(char *)(unsigned int *)0x8000ße348, (char *)info);
+    syscall(223,(char *)(unsigned int *)0x8000e348, (char *)info);
     puts((char *)info);
 
-	syscall(223, (char *)info, (char *)(unsigned int *)0x8000e348);
+	syscall(223, (char *)info, (char *)(unsigned int *)0x8000e348+223); // override!
 	syscall(223,(char *)(unsigned int *)0x8000e348, (char *)info);
 	puts((char *)info);
 	syscall(223, "/bin/sh", temp);
 	puts(temp);
 
-}
+}   
