@@ -9,12 +9,12 @@
 // programming
 #include <fcntl.h> // for open
 #include <unistd.h> // for close
-
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+
 #define MAX 80
 #define PORT 5842
 #define SA struct sockaddr
@@ -30,17 +30,17 @@ void func(int sockfd)
     bzero(stuff, sizeof(stuff));
 
     sleep(1);
-    read(sockfd, buff, sizeof(buff));
+    recv(sockfd, buff, sizeof(buff), 0);
     for (i=0; i<4; i++)
     {
         result += buff[i];
     }
 
-    write(sockfd, &result, sizeof(result));
+    send(sockfd, &result, sizeof(result), 0);
     bzero(buff, sizeof(buff));
     
-    read(sockfd, stuff, sizeof(buff));
-    printf("%s\n", &stuff);
+    recv(sockfd, stuff, sizeof(buff), 0);
+    printf("%s\n", (char *)&stuff);
 }
 
 int main()
