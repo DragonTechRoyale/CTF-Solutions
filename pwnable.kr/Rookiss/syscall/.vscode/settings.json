@@ -2,7 +2,10 @@
     "files.associations": {
         "atomic": "c",
         "bitset": "c",
-        "sched.h": "c"
+        "sched.h": "c",
+        "pthread.h": "c",
+        "types.h": "c",
+        "sstream": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
