@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "atomic": "c",
+        "bitset": "c",
+        "sched.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
